@@ -93,61 +93,62 @@ async def on_voice_state_update(member, before, after):
 			if str(after.channel.id) != str(afkid[0]):
 				global VoiceChannel
 				VoiceChannel = discord.utils.get(member.guild.voice_channels, id=after.channel.id)
-				with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'r+') as file:
-					info = yaml.load(file, Loader=yaml.FullLoader)
-					if info[0] == str(member.id):
-						embed = discord.Embed(title="placeholder")
-						global isPrivate_
-						isPrivate_ = False
-						for i in info:
-							if i == "not enabled":
-								info[info.index(i)] = "enabled"
-								with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'w') as filewrite:
-									yaml.dump(info, filewrite)
-					if info[0] != str(member.id):
-						for i in info:
-							if i == "not enabled":
-								with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile:
-									catinfo = yaml.load(catfile, Loader=yaml.FullLoader)
-									catinfo.reverse()
-									channel = discord.utils.get(member.guild.voice_channels, id=int(catinfo[0]))
-									await member.move_to(channel)
-									embed = discord.Embed(title="That voice channel is Locked.", description="When first created, voice channels are locked until their owners join them. This is to prevent others from joining and immediately leaving, thus deleting the channel before the owner can join.")
-									await member.send(embed=embed)
-							global enableindex
-							global privateindex
-							global removedindex
-							if info.count("private") > 0:
-								privateindex = info.index("private")
-							if info.count("public") > 0:
+				if path.exists(r'/root/voicerooms/%s.yaml' % VoiceChannel.id):
+					with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'r+') as file:
+						info = yaml.load(file, Loader=yaml.FullLoader)
+						if info[0] == str(member.id):
+							embed = discord.Embed(title="placeholder")
+							global isPrivate_
+							isPrivate_ = False
+							for i in info:
+								if i == "not enabled":
+									info[info.index(i)] = "enabled"
+									with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'w') as filewrite:
+										yaml.dump(info, filewrite)
+						if info[0] != str(member.id):
+							for i in info:
+								if i == "not enabled":
+									with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile:
+										catinfo = yaml.load(catfile, Loader=yaml.FullLoader)
+										catinfo.reverse()
+										channel = discord.utils.get(member.guild.voice_channels, id=int(catinfo[0]))
+										await member.move_to(channel)
+										embed = discord.Embed(title="That voice channel is Locked.", description="When first created, voice channels are locked until their owners join them. This is to prevent others from joining and immediately leaving, thus deleting the channel before the owner can join.")
+										await member.send(embed=embed)
+								global enableindex
+								global privateindex
+								global removedindex
+								if info.count("private") > 0:
+									privateindex = info.index("private")
+								if info.count("public") > 0:
 								privateindex = info.index("public")
-							if i == "not enabled":
-								enableindex = info.index("not enabled")
-							if i == "enabled":
-								enableindex = info.index("enabled")
-							removedindex = info.index("removed")
-							print(privateindex)
-							if i == "private":
-								with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile2:
-									if i in info and info.index(i )> privateindex and info.index(i) < enableindex:
-										isPrivate_ = True
-									if isPrivate_ != True:
+								if i == "not enabled":
+									enableindex = info.index("not enabled")
+								if i == "enabled":
+									enableindex = info.index("enabled")
+								removedindex = info.index("removed")
+								print(privateindex)
+								if i == "private":
+									with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile2:
+										if i in info and info.index(i )> privateindex and info.index(i) < enableindex:
+											isPrivate_ = True
+										if isPrivate_ != True:
+											catinfo = yaml.load(catfile2, Loader=yaml.FullLoader)
+											catinfo.reverse()
+											channel = discord.utils.get(member.guild.voice_channels, id=int(catinfo[0]))
+											await member.move_to(channel)
+											owner = bot.get_user(int(info[0]))
+											embed= discord.Embed(title="That voice channel is Private.", description=f"You must get permission from the channel owner to join that channel.")
+											await member.send(embed=embed)
+								if i in info and info.index(i) > removedindex and info.index(i) < privateindex:
+									with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile2:
 										catinfo = yaml.load(catfile2, Loader=yaml.FullLoader)
 										catinfo.reverse()
 										channel = discord.utils.get(member.guild.voice_channels, id=int(catinfo[0]))
 										await member.move_to(channel)
 										owner = bot.get_user(int(info[0]))
-										embed= discord.Embed(title="That voice channel is Private.", description=f"You must get permission from the channel owner to join that channel.")
+										embed = discord.Embed(title="The owner of that voice channel has removed you from the channel.", description="You cannot rejoin if you have been removed.")
 										await member.send(embed=embed)
-							if i in info and info.index(i) > removedindex and info.index(i) < privateindex:
-								with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile2:
-									catinfo = yaml.load(catfile2, Loader=yaml.FullLoader)
-									catinfo.reverse()
-									channel = discord.utils.get(member.guild.voice_channels, id=int(catinfo[0]))
-									await member.move_to(channel)
-									owner = bot.get_user(int(info[0]))
-									embed = discord.Embed(title="The owner of that voice channel has removed you from the channel.", description="You cannot rejoin if you have been removed.")
-									await member.send(embed=embed)
 			if str(after.channel.id) == str(afkid[0]):
 				await member.add_roles(discord.utils.get(member.guild.roles, id=int(afkid[2])))
 	with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile3:
@@ -163,17 +164,19 @@ async def on_voice_state_update(member, before, after):
 						randomuser = random.randint(0, int(usercnt) - 1)
 						info[0] = VoiceChannel.members[int(randomuser)].id
 						user = bot.get_user(int(info[0]))
-						with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'w') as file2write:
-							yaml.dump(info, file2write)
-							embed = discord.Embed(title="The original owner of your voice room has left. You are now the new voice room owner.")
-						await user.send(embed=embed)
+						if path.exists(r'/root/voicerooms/%s.yaml' % VoiceChannel.id):
+							with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'w') as file2write:
+								yaml.dump(info, file2write)
+								embed = discord.Embed(title="The original owner of your voice room has left. You are now the new voice room owner.")
+							await user.send(embed=embed)
 					if len(VoiceChannel.members) == 0:
 						await VoiceChannel.delete()
 						file2.close()
 			if str(before.channel.id) == str(afkid[0]):
 				await member.remove_roles(discord.utils.get(member.guild.roles, id=int(afkid[2])))
 		if len(VoiceChannel.members) == 0:
-			os.remove(r'/root/voicerooms/%s.yaml' % VoiceChannel.id)
+			if path.exists(r'/root/voicerooms/%s.yaml' % VoiceChannel.id):
+				os.remove(r'/root/voicerooms/%s.yaml' % VoiceChannel.id)
 
 #remove command
 @bot.command()
