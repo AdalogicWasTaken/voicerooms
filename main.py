@@ -28,7 +28,7 @@ async def category_set(ctx, mute, *category):
 	embed = discord.Embed(title="placeholder")
 	if discord.utils.get(ctx.guild.categories, name=' '.join(category[:])) != None and discord.utils.get(ctx.guild.roles, id=int(re.sub('<', '', re.sub('>', '', re.sub('&', '', re.sub('@', '', mute)))))):
 		catname = discord.utils.get(ctx.guild.categories, name=' '.join(category[:]))
-		with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(ctx.message.guild.id), 'a+') as file:
+		with open (r'/root/voicerooms/%s.yaml' % str(ctx.message.guild.id), 'a+') as file:
 			yaml.dump([str(re.sub('<', '', re.sub('>', '', re.sub('&', '', re.sub('@', '', mute)))))], file)
 			yaml.dump([str(' '.join(category[:]))], file)
 			CategoryChannel = catname
@@ -51,7 +51,7 @@ async def hub_create_error(ctx, error):
 @bot.command()
 async def create(ctx, limit, type, *name):
 	embed = discord.Embed(title="placeholder")
-	if path.exists(r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(ctx.message.guild.id)):
+	if path.exists(r'/root/voicerooms/%s.yaml' % str(ctx.message.guild.id)):
 		with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(ctx.message.guild.id), 'r+') as file:
 			if type == "public" or type == "private":
 				if int(limit) <= 10 and int(limit) >= 0:
@@ -63,7 +63,7 @@ async def create(ctx, limit, type, *name):
 					VoiceChannel = discord.utils.get(ctx.guild.voice_channels, name=str(truename))
 					embed = discord.Embed(title="Channel successfully created.", description=f"Name = {truename} \nUser_limit = {str(limit)} \nType = {type}")
 					await ctx.send(embed=embed)
-					with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % VoiceChannel.id, 'a+') as voice:
+					with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'a+') as voice:
 						print(ctx.author.id)
 						list = []
 						list.append(str(ctx.author.id))
@@ -93,7 +93,7 @@ async def on_voice_state_update(member, before, after):
 			if str(after.channel.id) != str(afkid[0]):
 				global VoiceChannel
 				VoiceChannel = discord.utils.get(member.guild.voice_channels, id=after.channel.id)
-				with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % VoiceChannel.id, 'r+') as file:
+				with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'r+') as file:
 					info = yaml.load(file, Loader=yaml.FullLoader)
 					if info[0] == str(member.id):
 						embed = discord.Embed(title="placeholder")
@@ -102,12 +102,12 @@ async def on_voice_state_update(member, before, after):
 						for i in info:
 							if i == "not enabled":
 								info[info.index(i)] = "enabled"
-								with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % VoiceChannel.id, 'w') as filewrite:
+								with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'w') as filewrite:
 									yaml.dump(info, filewrite)
 					if info[0] != str(member.id):
 						for i in info:
 							if i == "not enabled":
-								with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(member.guild.id), 'r+') as catfile:
+								with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile:
 									catinfo = yaml.load(catfile, Loader=yaml.FullLoader)
 									catinfo.reverse()
 									channel = discord.utils.get(member.guild.voice_channels, id=int(catinfo[0]))
@@ -128,7 +128,7 @@ async def on_voice_state_update(member, before, after):
 							removedindex = info.index("removed")
 							print(privateindex)
 							if i == "private":
-								with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(member.guild.id), 'r+') as catfile2:
+								with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile2:
 									if i in info and info.index(i )> privateindex and info.index(i) < enableindex:
 										isPrivate_ = True
 									if isPrivate_ != True:
@@ -140,7 +140,7 @@ async def on_voice_state_update(member, before, after):
 										embed= discord.Embed(title="That voice channel is Private.", description=f"You must get permission from the channel owner to join that channel.")
 										await member.send(embed=embed)
 							if i in info and info.index(i) > removedindex and info.index(i) < privateindex:
-								with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(member.guild.id), 'r+') as catfile2:
+								with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile2:
 									catinfo = yaml.load(catfile2, Loader=yaml.FullLoader)
 									catinfo.reverse()
 									channel = discord.utils.get(member.guild.voice_channels, id=int(catinfo[0]))
@@ -150,20 +150,20 @@ async def on_voice_state_update(member, before, after):
 									await member.send(embed=embed)
 			if str(after.channel.id) == str(afkid[0]):
 				await member.add_roles(discord.utils.get(member.guild.roles, id=int(afkid[2])))
-	with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(member.guild.id), 'r+') as catfile3:
+	with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile3:
 		afkid = yaml.load(catfile3, Loader=yaml.FullLoader)
 		afkid.reverse()
 		if before.channel:
 			if str(before.channel.id) != str(afkid[0]):
 				VoiceChannel = discord.utils.get(member.guild.voice_channels, id=before.channel.id)
-				with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % VoiceChannel.id, 'r+') as file2:
+				with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'r+') as file2:
 					info = yaml.load(file2, Loader=yaml.FullLoader)
 					if info[0] == str(member.id) and len(VoiceChannel.members) != 0:
 						usercnt = len(VoiceChannel.members)
 						randomuser = random.randint(0, int(usercnt) - 1)
 						info[0] = VoiceChannel.members[int(randomuser)].id
 						user = bot.get_user(int(info[0]))
-						with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % VoiceChannel.id, 'w') as file2write:
+						with open (r'/root/voicerooms/%s.yaml' % VoiceChannel.id, 'w') as file2write:
 							yaml.dump(info, file2write)
 							embed = discord.Embed(title="The original owner of your voice room has left. You are now the new voice room owner.")
 						await user.send(embed=embed)
@@ -173,7 +173,7 @@ async def on_voice_state_update(member, before, after):
 			if str(before.channel.id) == str(afkid[0]):
 				await member.remove_roles(discord.utils.get(member.guild.roles, id=int(afkid[2])))
 		if len(VoiceChannel.members) == 0:
-			os.remove(r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % VoiceChannel.id)
+			os.remove(r'/root/voicerooms/%s.yaml' % VoiceChannel.id)
 
 #remove command
 @bot.command()
@@ -187,7 +187,7 @@ async def remove(ctx, user):
 	isPrivate = False
 	member = ctx.guild.get_member(int(member))
 	if ctx.author.voice != None:
-		with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % ctx.author.voice.channel.id, 'r+') as listread:
+		with open (r'/root/voicerooms/%s.yaml' % ctx.author.voice.channel.id, 'r+') as listread:
 			read = yaml.load(listread, Loader=yaml.FullLoader)
 			if str(read[0]) == str(ctx.author.id):
 				for i in read:
@@ -196,9 +196,9 @@ async def remove(ctx, user):
 						read.insert(read.index(i) + 1, member.id)
 						print(read)
 						listread.close()
-						with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % ctx.author.voice.channel.id, 'w') as listwrite:
+						with open (r'/root/voicerooms/%s.yaml' % ctx.author.voice.channel.id, 'w') as listwrite:
 							yaml.dump(read, listwrite)
-							with open(r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(member.guild.id), 'r+') as afk:
+							with open(r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as afk:
 								afkroom = yaml.load(afk, Loader=yaml.FullLoader)
 								afkroom.reverse()
 								if member.voice != None:
@@ -226,7 +226,7 @@ async def allow(ctx, user):
 	member = ctx.guild.get_member(int(member))
 	isPrivate = False
 	if ctx.author.voice != None:
-		with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % ctx.author.voice.channel.id, 'r+') as listread:
+		with open (r'/root/voicerooms/%s.yaml' % ctx.author.voice.channel.id, 'r+') as listread:
 			read = yaml.load(listread, Loader=yaml.FullLoader)
 			if str(read[0]) == str(ctx.author.id):
 				for i in read:
@@ -238,7 +238,7 @@ async def allow(ctx, user):
 					embed = discord.Embed(title="Error", description="Your voice channel is public. This command can only be used with private channels.")
 					await ctx.send(embed=embed)
 				if isPrivate == True:
-					with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % ctx.author.voice.channel.id, 'w') as listwrite:
+					with open (r'/root/voicerooms/%s.yaml' % ctx.author.voice.channel.id, 'w') as listwrite:
 						yaml.dump(read, listwrite)
 						embed = discord.Embed(title="Operation successful", description="User has been granted permission to join your private voice channel.")
 						await ctx.send(embed=embed)
@@ -254,8 +254,8 @@ async def allow(ctx, user):
 async def owner(ctx, *channel):
 	voicechan = discord.utils.get(ctx.guild.voice_channels, name=' '.join(channel[:]))
 	if voicechan:
-		if path.exists(r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(voicechan.id)):
-			with open(r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(voicechan.id), "r+") as file:
+		if path.exists(r'/root/voicerooms/%s.yaml' % str(voicechan.id)):
+			with open(r'/root/voicerooms/%s.yaml' % str(voicechan.id), "r+") as file:
 				fileread = yaml.load(file, Loader=yaml.FullLoader)
 				user = bot.get_user(int(fileread[0]))
 				await ctx.send(f"The owner of that channel is ``{user.name}``.")
