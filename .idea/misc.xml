@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.6 (voicerooms)" project-jdk-type="Python SDK" />
+  <component name="StickyNotes">
+    <option name="stickyNotes">
+      <list>
+        <SerializedStickyNote>
+          <option name="description" value="Test with nicholas" />
+        </SerializedStickyNote>
+        <SerializedStickyNote>
+          <option name="archived" value="true" />
+          <option name="description" value="delete channel if all users leave, assign owner to new user if original owner leaves" />
+        </SerializedStickyNote>
+        <SerializedStickyNote>
+          <option name="archived" value="true" />
+          <option name="description" value="Detect if user leaves channel, delete channel if all users are gone" />
+        </SerializedStickyNote>
+      </list>
+    </option>
+  </component>
+</project>
