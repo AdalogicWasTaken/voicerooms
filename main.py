@@ -52,7 +52,7 @@ async def hub_create_error(ctx, error):
 async def create(ctx, limit, type, *name):
 	embed = discord.Embed(title="placeholder")
 	if path.exists(r'/root/voicerooms/%s.yaml' % str(ctx.message.guild.id)):
-		with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(ctx.message.guild.id), 'r+') as file:
+		with open (r'/root/voicerooms/%s.yaml' % str(ctx.message.guild.id), 'r+') as file:
 			if type == "public" or type == "private":
 				if int(limit) <= 10 and int(limit) >= 0:
 					truename = ' '.join(name[:])
@@ -85,7 +85,7 @@ async def create(ctx, limit, type, *name):
 #on join/leave
 @bot.event
 async def on_voice_state_update(member, before, after):
-	with open (r'C:\Users\Cindyarta\PycharmProjects\voicerooms\%s.yaml' % str(member.guild.id), 'r+') as catfile3:
+	with open (r'/root/voicerooms/%s.yaml' % str(member.guild.id), 'r+') as catfile3:
 		afkid = yaml.load(catfile3, Loader=yaml.FullLoader)
 		afkid.reverse()
 		print(afkid[2])
